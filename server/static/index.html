@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Framework Ranker</title>
+</head>
+
+<body>
+  <p>Hello Word</p>
+  <h1 id="header"></h1>
+  <script>
+    const ws = new WebSocket(`ws://localhost:8000/`);
+    const h1 = document.querySelector("#header")
+
+    ws.onopen = function (evt) {
+      console.log("Web Socket Connection Established!")
+      h1.innerHTML = "Web Socket Connection Established!"
+    };
+
+    ws.onmessage = function (evt) {
+      // called when browser receives a "message"
+      h1.innerHTML = "Web Socket message received!"
+      console.log("got", evt.data);
+      setTimeout(() => {
+        h1.innerHTML = String(evt.data)
+      })
+    };
+
+    ws.onclose = function (evt) {
+      // called when server closes connection
+      console.log("Web Socket Connection Closed.")
+      h1.innerHTML = "Web Socket Connection Closed."
+    };
+  </script>
+</body>
+
+</html>
