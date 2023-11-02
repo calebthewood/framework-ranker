@@ -19,6 +19,7 @@ export interface Vote {
 }
 
 export type FrameworkTitle =
+  "none" |
   "react" |
   "solid" |
   "svelte" |
