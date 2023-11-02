@@ -10,28 +10,57 @@
 <body>
   <p>Hello Word</p>
   <h1 id="header"></h1>
+  <div id="vote-btns">
+    <button value="react">Vote for React</button>
+    <button value="angular">Vote for Angular</button>
+    <button value="vue">Vote for Vue</button>
+  </div>
+  <div id="ranking">
+  </div>
+
   <script>
     const ws = new WebSocket(`ws://localhost:8000/`);
-    const h1 = document.querySelector("#header")
+    const h1 = document.querySelector("#header");
+
+
+    const btns = document
+      .querySelector("#vote-btns")
+      .addEventListener("click", (evt) => {
+        ws.send(JSON.stringify({ framework: evt.target.value }));
+      });
 
     ws.onopen = function (evt) {
-      console.log("Web Socket Connection Established!")
-      h1.innerHTML = "Web Socket Connection Established!"
+      console.log("Web Socket Connection Established!");
+      h1.innerHTML = "Web Socket Connection Established!";
     };
 
     ws.onmessage = function (evt) {
       // called when browser receives a "message"
-      h1.innerHTML = "Web Socket message received!"
-      console.log("got", evt.data);
-      setTimeout(() => {
-        h1.innerHTML = String(evt.data)
-      })
+      h1.innerHTML = "Web Socket message received!";
+      const data = JSON.parse(evt.data);
+      if ("votes" in data && "msg" in data) {
+        const { votes, msg } = data;
+        h1.innerHTML = String(msg);
+
+        console.log("got", evt.data);
+
+        let li, text;
+        const ol = document.createElement("ol");
+        for (let [framework, voteCount] of Object.entries(votes)) {
+          li = document.createElement("li");
+          text = document.createTextNode(`${framework}: ${voteCount}`);
+          li.appendChild(text);
+          ol.appendChild(li);
+        }
+        console.log(ol);
+        document.getElementById("ranking").appendChild(ol);
+      }
     };
 
     ws.onclose = function (evt) {
       // called when server closes connection
-      console.log("Web Socket Connection Closed.")
-      h1.innerHTML = "Web Socket Connection Closed."
+      console.log("Web Socket Connection Closed.");
+      h1.innerHTML = "Web Socket Connection Closed.";
     };
   </script>
 </body>
